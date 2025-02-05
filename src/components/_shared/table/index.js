@@ -55,6 +55,7 @@ const StyledTableCell = styled(TableCell)(({}) => ({
 
 const OrderTable = () => {
   const navigate = useNavigate();
+
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 

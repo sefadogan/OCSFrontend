@@ -1,8 +1,10 @@
 import { useSelector } from "react-redux";
-import OCSInfoCards from "../../components/cards-info";
-import OCSDeliveryProgressBar from "../../components/progress-bars/delivery";
-import OrderTable from "../../components/table";
+import OCSInfoCards from "../../components/_shared/cards-info";
+import OCSDeliveryProgressBar from "../../components/_shared/progress-bars/delivery";
+import OrderTable from "../../components/_shared/table";
 import { selectOrders } from "../../store/ocs/orders/ordersSlice";
+import OCSTitleSeperator from "../../components/_shared/seperators/title";
+import OCSOrdersFilteringForm from "../../components/orders/filtering-form";
 
 const OCSOrdersPage = () => {
   const { orders } = useSelector(selectOrders);
@@ -20,6 +22,13 @@ const OCSOrdersPage = () => {
       <OCSInfoCards data={infoCardsData} />
 
       <OCSDeliveryProgressBar total={400} completed={300} />
+
+      <OCSTitleSeperator
+        titleClassName="text-2xl font-bold"
+        title="SİPARİŞ KONTROL EKRANI"
+      />
+
+      <OCSOrdersFilteringForm />
 
       <OrderTable />
     </div>
