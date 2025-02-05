@@ -1,5 +1,9 @@
+import { useParams } from "react-router-dom";
+
 const OCSOrderDetailPage = () => {
-  return <>detail</>;
+  const { id } = useParams();
+
+  return <span>Sipariş No: {id}</span>;
 };
 
 export default OCSOrderDetailPage;

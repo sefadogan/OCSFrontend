@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import OCSInfoCards from "../../components/cards-info";
 import OCSDeliveryProgressBar from "../../components/progress-bars/delivery";
+import OrderTable from "../../components/table";
 import { selectOrders } from "../../store/ocs/orders/ordersSlice";
 
 const OCSOrdersPage = () => {
@@ -19,6 +20,8 @@ const OCSOrdersPage = () => {
       <OCSInfoCards data={infoCardsData} />
 
       <OCSDeliveryProgressBar total={400} completed={300} />
+
+      <OrderTable />
     </div>
   );
 };

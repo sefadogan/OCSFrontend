@@ -4,22 +4,8 @@ const OCSDeliveryProgressBar = ({ completed, total }) => {
   const percentage = Math.min((completed / total) * 100, 100);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
-        alignItems: "center",
-        gap: "2rem",
-        width: "100%",
-      }}
-    >
-      <Box
-        sx={{
-          position: "relative",
-          flexGrow: 1,
-          width: "100%",
-        }}
-      >
+    <div className="flex items-center gap-[2rem] w-full">
+      <div className="relative flex-grow w-full">
         <LinearProgress
           variant="determinate"
           value={percentage}
@@ -51,8 +37,8 @@ const OCSDeliveryProgressBar = ({ completed, total }) => {
         >
           TAMAMLANAN SİPARİŞ {completed}/{total}
         </div>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 
