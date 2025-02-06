@@ -1,23 +1,35 @@
-import { Button, Card, CardContent, MenuItem, TextField } from "@mui/material";
+import { Button, MenuItem, TextField } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import React, { useState } from "react";
-
-const statuses = ["Pending", "Shipped", "Delivered", "Cancelled"];
-const distributionStatuses = ["Pending", "Released", "In Progress"];
+import { useDispatch, useSelector } from "react-redux";
+import {
+  orderReleasedForDistributionOptions,
+  orderStatusOptions,
+} from "../../../constants/orderConstants";
+import {
+  getOrdersTableDataThunkAsync,
+  selectOrders,
+} from "../../../store/ocs/orders/ordersSlice";
+import { buildFilterQuery } from "../../../utils/commonHelper";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 const OCSOrdersFilteringForm = ({}) => {
+  const dispatch = useDispatch();
+
+  const { ordersTable } = useSelector(selectOrders);
+
   const [formData, setFormData] = useState({
     shipmentTrackingNo: "",
     orderTrackingNo: "",
-    plateNumber: "",
-    createdDateMin: null,
-    createdDateMax: null,
+    createdDate: {
+      min: null,
+      max: null,
+    },
     status: "",
     releasedForDistribution: "",
   });
-  console.log(formData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,11 +37,25 @@ const OCSOrdersFilteringForm = ({}) => {
   };
 
   const handleDateChange = (name, value) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => {
+      const [parentKey, childKey] = name.split(".");
+
+      return {
+        ...prev,
+        [parentKey]: {
+          ...prev[parentKey],
+          [childKey]: value,
+        },
+      };
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (ordersTable.loadOptions.isLoading) return;
+
+    const filterQuery = buildFilterQuery(formData);
+    dispatch(getOrdersTableDataThunkAsync({ filterValue: filterQuery }));
   };
 
   return (
@@ -37,6 +63,7 @@ const OCSOrdersFilteringForm = ({}) => {
       onSubmit={handleSubmit}
       className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"
     >
+      {/* TODO: tüm form input'lar için component */}
       <TextField
         label="Gönderi Takip No"
         name="shipmentTrackingNo"
@@ -53,19 +80,17 @@ const OCSOrdersFilteringForm = ({}) => {
         fullWidth
       />
 
-      <TextField
-        label="Plaka"
-        name="plateNumber"
-        value={formData.plateNumber}
-        onChange={handleChange}
-        fullWidth
-      />
-
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterMoment}>
         <DatePicker
-          label="Tarih Aralığı"
-          value={formData.createdDateMin}
-          onChange={(value) => handleDateChange("createdDateMin", value)}
+          label="Oluşturulma Tarihi (Başlangıç)"
+          value={formData.createdDate.min}
+          onChange={(value) => handleDateChange("createdDate.min", value)}
+          renderInput={(params) => <TextField {...params} fullWidth />}
+        />
+        <DatePicker
+          label="Oluşturulma Tarihi (Bitiş)"
+          value={formData.createdDate.max}
+          onChange={(value) => handleDateChange("createdDate.max", value)}
           renderInput={(params) => <TextField {...params} fullWidth />}
         />
       </LocalizationProvider>
@@ -78,13 +103,14 @@ const OCSOrdersFilteringForm = ({}) => {
         onChange={handleChange}
         fullWidth
       >
-        {statuses.map((status) => (
-          <MenuItem key={status} value={status}>
-            {status}
+        {orderStatusOptions.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.text}
           </MenuItem>
         ))}
       </TextField>
 
+      {/* select yerine switch box daha uygun olur */}
       <TextField
         select
         label="Dağıtım Durumu"
@@ -93,14 +119,15 @@ const OCSOrdersFilteringForm = ({}) => {
         onChange={handleChange}
         fullWidth
       >
-        {distributionStatuses.map((status) => (
-          <MenuItem key={status} value={status}>
-            {status}
+        {orderReleasedForDistributionOptions.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.text}
           </MenuItem>
         ))}
       </TextField>
 
-      <div className="col-span-1 sm:col-span-2 md:col-span-4 flex justify-end">
+      <div className="col-span-1 sm:col-span-2 md:col-span-4 flex justify-end gap-[1rem]">
+        {/* TODO: button component */}
         <Button
           type="submit"
           variant="contained"
@@ -115,6 +142,7 @@ const OCSOrdersFilteringForm = ({}) => {
               backgroundColor: "#444444",
             },
           }}
+          disabled={ordersTable.loadOptions.isLoading}
         >
           Filtrele
         </Button>

@@ -1,38 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo } from "react";
 
-import OCSTableHeader from "./header";
 import {
-  Box,
   Button,
   MenuItem,
   Pagination,
   Select,
+  styled,
   Table,
+  TableCell,
   tableCellClasses,
   TableContainer,
   TableRow,
-  Typography,
-  styled,
-  TableCell,
 } from "@mui/material";
+import moment from "moment";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+  getOrdersTableDataThunkAsync,
+  selectOrders,
+  setOrdersTablePageNumber,
+  setOrdersTablePageSize,
+} from "../../../store/ocs/orders/ordersSlice";
+import {
+  getOrderStatusById,
+  getReleaseForDistributionById,
+} from "../../../utils/orders/orderHelper";
 import OCSTableBody from "./body";
-import { Navigate, useNavigate } from "react-router-dom";
-
-const rows = Array.from({ length: 168 }, (_, idx) => ({
-  id: idx + 1,
-  shipmentTrackingNo: "S-123456",
-  orderTrackingNo: "O-123456",
-  customer: {
-    firstName: "Sefa",
-    lastName: "DOĞAN",
-  },
-  district: {
-    name: "Maltepe",
-  },
-  releasedForDistribution: true,
-  status: "Teslim Edildi",
-  createdDate: "12.09.2021",
-}));
+import OCSTableHeader from "./header";
+import { tableConstants } from "../../../constants/commonConstants";
 
 const StyledTableCell = styled(TableCell)(({}) => ({
   fontSize: "1rem",
@@ -54,16 +49,10 @@ const StyledTableCell = styled(TableCell)(({}) => ({
 }));
 
 const OrderTable = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const paginatedRows = rows.slice(
-    (page - 1) * rowsPerPage,
-    (page - 1) * rowsPerPage + rowsPerPage
-  );
-  const totalPages = Math.ceil(rows.length / rowsPerPage);
+  const { ordersTable } = useSelector(selectOrders);
 
   const headers = [
     { name: "Sipariş No", width: "10%" },
@@ -79,11 +68,20 @@ const OrderTable = () => {
   ];
 
   const handleChangePage = (e, value) => {
-    setPage(value);
+    if (value === ordersTable.loadOptions.pageNumber) return;
+
+    dispatch(setOrdersTablePageNumber(value));
+
+    //TODO: build filter query
+    dispatch(getOrdersTableDataThunkAsync({}));
   };
   const handleChangeRowsPerPage = (e) => {
-    setRowsPerPage(parseInt(e.target.value, 10));
-    setPage(1);
+    if (e.target.value === ordersTable.loadOptions.pageSize) return;
+    dispatch(setOrdersTablePageNumber(1));
+    dispatch(setOrdersTablePageSize(e.target.value));
+
+    //TODO: build filter query
+    dispatch(getOrdersTableDataThunkAsync({}));
   };
 
   const handleOrderDetailClick = (data) => {
@@ -115,15 +113,14 @@ const OrderTable = () => {
           </StyledTableCell>
           <StyledTableCell width="10%" align="center">
             {/* TODO: badge oluştur */}
-            {data.releasedForDistribution ? "Evet" : "Hayır"}
+            {getReleaseForDistributionById(data.releasedForDistribution).text}
           </StyledTableCell>
           <StyledTableCell width="10%" align="center">
             {/* TODO: badge ve status helper oluştur */}
-            {data.status}
+            {getOrderStatusById(data.status).text}
           </StyledTableCell>
           <StyledTableCell width="10%" align="center">
-            {/* TODO: badge ve status helper oluştur */}
-            {data.createdDate}
+            {moment(data.createdDate).format("DD.MM.YYYY")}
           </StyledTableCell>
 
           <StyledTableCell width="10%" align="center">
@@ -153,25 +150,34 @@ const OrderTable = () => {
     );
   };
 
+  useEffect(() => {
+    dispatch(getOrdersTableDataThunkAsync({}));
+  }, []);
+
   return (
     <>
       <TableContainer>
         <TableContainer sx={{ width: "100%" }}>
           <Table>
             <OCSTableHeader headers={headers} />
-            <OCSTableBody data={paginatedRows} rowFormat={rowFormat} />
+            {ordersTable.loadOptions.isLoading ? (
+              "Yükleniyor..."
+            ) : (
+              <OCSTableBody data={ordersTable.dataList} rowFormat={rowFormat} />
+            )}
           </Table>
         </TableContainer>
       </TableContainer>
 
       <div className="flex justify-end items-center gap-[1rem]">
         <span className="font-semibold text-gray-600">
-          Toplam: {rows.length}
+          Toplam: {ordersTable.dataList.length}
         </span>
 
         <Pagination
-          count={totalPages}
-          page={page}
+          count={ordersTable.totalPages}
+          defaultPage={1}
+          page={ordersTable.loadOptions.pageNumber}
           onChange={handleChangePage}
           color="primary"
           shape="rounded"
@@ -198,12 +204,12 @@ const OrderTable = () => {
         />
 
         <Select
-          value={rowsPerPage}
+          value={ordersTable.loadOptions.pageSize}
           onChange={handleChangeRowsPerPage}
           size="small"
           sx={{ height: "2rem" }}
         >
-          {[10, 25, 50, 100].map((option) => (
+          {tableConstants.rowsPerPage.map((option) => (
             <MenuItem key={option} value={option}>
               {option}
             </MenuItem>
