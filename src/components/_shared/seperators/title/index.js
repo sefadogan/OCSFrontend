@@ -1,10 +1,15 @@
 const OCSTitleSeperator = ({
   title,
   titleClassName,
-  justifyItems = "center",
+  justifyContent = "center",
 }) => {
   return (
-    <div className={`flex items-center w-full justify-${justifyItems}`}>
+    <div
+      className="flex items-center"
+      style={{
+        justifyContent: justifyContent,
+      }}
+    >
       <div className={titleClassName}>{title}</div>
     </div>
   );
