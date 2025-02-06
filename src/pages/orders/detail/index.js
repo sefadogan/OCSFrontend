@@ -20,7 +20,7 @@ const OCSOrderDetailPage = () => {
   return isOrderLoading ? (
     <Skeleton width="15rem" height="3rem" />
   ) : (
-    JSON.stringify(order)
+    JSON.stringify(order ?? "-")
   );
 };
 
