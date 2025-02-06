@@ -124,7 +124,7 @@ const OrderTable = () => {
           </StyledTableCell>
 
           <StyledTableCell width="10%" align="center">
-            {/* re-usable component hale getirilebilir */}
+            {/* TODO: button component'i oluştur*/}
             <Button
               variant="contained"
               className="rounded-lg"
@@ -171,7 +171,7 @@ const OrderTable = () => {
 
       <div className="flex justify-end items-center gap-[1rem]">
         <span className="font-semibold text-gray-600">
-          Toplam: {ordersTable.dataList.length}
+          Toplam: {ordersTable.totalRecords}
         </span>
 
         <Pagination

@@ -1,24 +1,28 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 import { ordersReduxStateConstants } from "../../../constants/orderConstants";
-import { buildQueryString } from "../../../utils/commonHelper";
-import { isNullOrEmptyOrUndefined } from "../../../utils/dataCheck";
-import { getODataClient } from "../../../utils/odata/odataHelper";
 import {
   getGetOrderByIdUrl,
   orderUrls,
 } from "../../../constants/urls/orderUrls";
+import {
+  buildFilterQuery,
+  buildQueryString,
+} from "../../../utils/commonHelper";
+import { isNullOrEmptyOrUndefined } from "../../../utils/dataCheck";
+import { getODataClient } from "../../../utils/odata/odataHelper";
 import { sliceNames } from "../../sliceNames";
-import axios from "axios";
 
 export const getOrdersTableDataThunkAsync = createAsyncThunk(
   "orders/getOrdersTableDataThunkAsync",
-  async ({ filterValue }, { getState, dispatch, rejectWithValue }) => {
+  async ({}, { getState, dispatch, rejectWithValue }) => {
     try {
       dispatch(setOrdersTableLoading(true));
 
       const { ordersTable } = getState().ocs[sliceNames.orders];
 
-      const filterQuery = buildQueryString({
+      const filterValue = buildFilterQuery(ordersTable.filterValues);
+      const queryString = buildQueryString({
         PageNumber: ordersTable.loadOptions.pageNumber,
         PageSize: ordersTable.loadOptions.pageSize,
         ...(!isNullOrEmptyOrUndefined(filterValue) && {
@@ -27,7 +31,7 @@ export const getOrdersTableDataThunkAsync = createAsyncThunk(
       });
 
       const response = await getODataClient()
-        .get(`${orderUrls.LIST_ODATA}?${filterQuery}`)
+        .get(`${orderUrls.LIST_ODATA}?${queryString}`)
         .query({});
 
       const { totalPages, totalRecords } = response;
@@ -109,8 +113,16 @@ const ordersSlice = createSlice({
     setOrdersTableTotalRecords: (state, action) => {
       state.ordersTable.totalRecords = action.payload;
     },
-    setOrdersTableFilterValues: (state, action) => {
-      state.ordersTable.filterValues = action.payload;
+    updateOrdersTableFilterValues: (state, action) => {
+      const { name, value } = action.payload;
+
+      // createdDate.min gibi bir yapı;
+      if (name.includes(".")) {
+        const [parentKey, childKey] = name.split(".");
+        state.ordersTable.filterValues[parentKey][childKey] = value;
+      } else {
+        state.ordersTable.filterValues[name] = value;
+      }
     },
     setOrdersTableSearchBarValue: (state, action) => {
       state.ordersTable.searchBarValue = action.payload;
@@ -146,7 +158,7 @@ export const {
   setOrdersTablePageSize,
   setOrdersTableTotalPages,
   setOrdersTableTotalRecords,
-  setOrdersTableFilterValues,
+  updateOrdersTableFilterValues,
   setOrdersTableSearchBarValue,
   setOrdersTableFilterQuery,
   setOrdersTableSortingValue,

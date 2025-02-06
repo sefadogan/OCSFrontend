@@ -1,6 +1,11 @@
+import moment from "moment";
 import { o as ODataClient } from "odata";
 
 export const getODataClient = () => {
-  //TODO: env'a ekle
-  return new ODataClient("https://localhost:44391");
+  return new ODataClient(process.env.REACT_APP_API_URL);
+};
+
+export const formatDateForOData = (date) => {
+  if (!date) return null;
+  return moment(date).utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
 };

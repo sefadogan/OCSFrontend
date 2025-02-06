@@ -5,6 +5,7 @@ import OrderTable from "../../components/_shared/table";
 import { selectOrders } from "../../store/ocs/orders/ordersSlice";
 import OCSTitleSeperator from "../../components/_shared/seperators/title";
 import OCSOrdersFilteringForm from "../../components/orders/filtering-form";
+import { useEffect } from "react";
 
 const OCSOrdersPage = () => {
   const { orders } = useSelector(selectOrders);
@@ -16,6 +17,13 @@ const OCSOrdersPage = () => {
     { title: "Teslim Edildi", value: 120 },
     { title: "Teslim Edilemedi", value: 20 },
   ];
+
+  useEffect(() => {
+    return () => {
+      // ..
+      // handleOrderPageLeave();
+    };
+  }, []);
 
   return (
     <div className="flex flex-col w-full p-[1.5rem] gap-[1.5rem]">

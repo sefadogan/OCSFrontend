@@ -1,4 +1,14 @@
-import { isNullOrEmptyOrUndefined } from "./dataCheck";
+import { isNull, isNullOrEmptyOrUndefined } from "./dataCheck";
+import { formatDateForOData } from "./odata/odataHelper";
+
+export const isObjectValuesEmpty = (obj) => {
+  return Object.values(obj).every((value) => {
+    if (typeof value === "object" && !isNull(value))
+      return isObjectValuesEmpty(value);
+
+    return isNullOrEmptyOrUndefined(value);
+  });
+};
 
 export const buildQueryString = (parametersObject) => {
   if (isNullOrEmptyOrUndefined(parametersObject)) return "";
@@ -59,9 +69,9 @@ const handleRangeFilter = (key, value) => {
   let conditions = [];
 
   if (!isNullOrEmptyOrUndefined(value.min))
-    conditions.push(`${key} ge ${value.min}`);
+    conditions.push(`${key} ge ${formatDateForOData(value.min)}`);
   if (!isNullOrEmptyOrUndefined(value.max))
-    conditions.push(`${key} le ${value.max}`);
+    conditions.push(`${key} le ${formatDateForOData(value.max)}`);
 
   return conditions.length > 0 ? conditions.join(" and ") : "";
 };

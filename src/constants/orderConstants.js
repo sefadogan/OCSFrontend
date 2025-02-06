@@ -5,9 +5,14 @@ export const ordersReduxStateConstants = {
     isLoading: true,
   },
   ordersTableFilterValues: {
-    // createdDate: { min: null, max: null },
-    // orderTrackingNo: null,
-    // ...
+    shipmentTrackingNo: "",
+    orderTrackingNo: "",
+    createdDate: {
+      min: null,
+      max: null,
+    },
+    status: "",
+    releasedForDistribution: "",
   },
 };
 

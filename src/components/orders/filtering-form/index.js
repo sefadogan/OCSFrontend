@@ -1,8 +1,8 @@
 import { Button, MenuItem, TextField } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   orderReleasedForDistributionOptions,
@@ -11,51 +11,28 @@ import {
 import {
   getOrdersTableDataThunkAsync,
   selectOrders,
+  updateOrdersTableFilterValues,
 } from "../../../store/ocs/orders/ordersSlice";
-import { buildFilterQuery } from "../../../utils/commonHelper";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { isObjectValuesEmpty } from "../../../utils/commonHelper";
 
 const OCSOrdersFilteringForm = ({}) => {
   const dispatch = useDispatch();
 
   const { ordersTable } = useSelector(selectOrders);
 
-  const [formData, setFormData] = useState({
-    shipmentTrackingNo: "",
-    orderTrackingNo: "",
-    createdDate: {
-      min: null,
-      max: null,
-    },
-    status: "",
-    releasedForDistribution: "",
-  });
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    dispatch(updateOrdersTableFilterValues({ name, value }));
   };
-
   const handleDateChange = (name, value) => {
-    setFormData((prev) => {
-      const [parentKey, childKey] = name.split(".");
-
-      return {
-        ...prev,
-        [parentKey]: {
-          ...prev[parentKey],
-          [childKey]: value,
-        },
-      };
-    });
+    dispatch(updateOrdersTableFilterValues({ name, value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (ordersTable.loadOptions.isLoading) return;
 
-    const filterQuery = buildFilterQuery(formData);
-    dispatch(getOrdersTableDataThunkAsync({ filterValue: filterQuery }));
+    dispatch(getOrdersTableDataThunkAsync({}));
   };
 
   return (
@@ -67,7 +44,7 @@ const OCSOrdersFilteringForm = ({}) => {
       <TextField
         label="Gönderi Takip No"
         name="shipmentTrackingNo"
-        value={formData.shipmentTrackingNo}
+        value={ordersTable.filterValues.shipmentTrackingNo}
         onChange={handleChange}
         fullWidth
       />
@@ -75,7 +52,7 @@ const OCSOrdersFilteringForm = ({}) => {
       <TextField
         label="Sipariş Takip No"
         name="orderTrackingNo"
-        value={formData.orderTrackingNo}
+        value={ordersTable.filterValues.orderTrackingNo}
         onChange={handleChange}
         fullWidth
       />
@@ -83,13 +60,15 @@ const OCSOrdersFilteringForm = ({}) => {
       <LocalizationProvider dateAdapter={AdapterMoment}>
         <DatePicker
           label="Oluşturulma Tarihi (Başlangıç)"
-          value={formData.createdDate.min}
+          value={ordersTable.filterValues.createdDate.min}
           onChange={(value) => handleDateChange("createdDate.min", value)}
+          maxDate={ordersTable.filterValues.createdDate.max}
           renderInput={(params) => <TextField {...params} fullWidth />}
         />
         <DatePicker
           label="Oluşturulma Tarihi (Bitiş)"
-          value={formData.createdDate.max}
+          value={ordersTable.filterValues.createdDate.max}
+          minDate={ordersTable.filterValues.createdDate.min}
           onChange={(value) => handleDateChange("createdDate.max", value)}
           renderInput={(params) => <TextField {...params} fullWidth />}
         />
@@ -99,7 +78,7 @@ const OCSOrdersFilteringForm = ({}) => {
         select
         label="Durum"
         name="status"
-        value={formData.status}
+        value={ordersTable.filterValues.status}
         onChange={handleChange}
         fullWidth
       >
@@ -115,7 +94,7 @@ const OCSOrdersFilteringForm = ({}) => {
         select
         label="Dağıtım Durumu"
         name="releasedForDistribution"
-        value={formData.releasedForDistribution}
+        value={ordersTable.filterValues.releasedForDistribution}
         onChange={handleChange}
         fullWidth
       >
@@ -142,7 +121,10 @@ const OCSOrdersFilteringForm = ({}) => {
               backgroundColor: "#444444",
             },
           }}
-          disabled={ordersTable.loadOptions.isLoading}
+          disabled={
+            ordersTable.loadOptions.isLoading ||
+            isObjectValuesEmpty(ordersTable.filterValues)
+          }
         >
           Filtrele
         </Button>
