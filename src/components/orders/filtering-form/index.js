@@ -17,6 +17,7 @@ import { isObjectValuesEmpty } from "../../../utils/commonHelper";
 import OCSTextField from "../../_shared/form-elements/text-field";
 import OCSDatePicker from "../../_shared/form-elements/date-picker";
 import OCSSelect from "../../_shared/form-elements/select";
+import OCSButton from "../../_shared/button";
 
 const OCSOrdersFilteringForm = ({}) => {
   const dispatch = useDispatch();
@@ -91,28 +92,16 @@ const OCSOrdersFilteringForm = ({}) => {
       />
 
       <div className="col-span-1 sm:col-span-2 md:col-span-4 flex justify-end gap-[1rem]">
-        {/* TODO: button component */}
-        <Button
+        <OCSButton
           type="submit"
-          variant="contained"
-          sx={{
-            backgroundColor: "#444444",
-            textTransform: "none",
-            fontSize: "1rem",
-            minWidth: "8.75rem",
-            fontWeight: 500,
-            borderRadius: ".5rem",
-            ":hover": {
-              backgroundColor: "#444444",
-            },
-          }}
+          bgColor="#444444"
+          text="Filtrele"
+          minWidth="8.75rem"
           disabled={
             ordersTable.loadOptions.isLoading ||
             isObjectValuesEmpty(ordersTable.filterValues)
           }
-        >
-          Filtrele
-        </Button>
+        />
       </div>
     </form>
   );

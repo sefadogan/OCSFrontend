@@ -28,6 +28,8 @@ import {
 import OCSTableBody from "./body";
 import OCSTableHeader from "./header";
 import { tableConstants } from "../../../constants/commonConstants";
+import OCSButton from "../button";
+import { isObjectValuesEmpty } from "../../../utils/commonHelper";
 
 const StyledTableCell = styled(TableCell)(({}) => ({
   fontSize: "1rem",
@@ -103,7 +105,7 @@ const OrderTable = () => {
           </StyledTableCell>
           <StyledTableCell width="10%" align="center">
             {/* TODO: fullname helper oluştur */}
-            {`${data.customer.firstName} ${data.customer.lastName} (${data.id})`}
+            {`${data.customer.firstName} ${data.customer.lastName}`}
           </StyledTableCell>
           <StyledTableCell width="10%" align="center">
             {data.district.name}
@@ -124,26 +126,13 @@ const OrderTable = () => {
           </StyledTableCell>
 
           <StyledTableCell width="10%" align="center">
-            {/* TODO: button component'i oluştur*/}
-            <Button
-              variant="contained"
-              className="rounded-lg"
-              sx={{
-                backgroundColor: "#5f7b2d",
-                textTransform: "none",
-                fontSize: "1rem",
-                minWidth: "8.75rem",
-                fontWeight: 500,
-                padding: ".1rem",
-                borderRadius: ".5rem",
-                ":hover": {
-                  backgroundColor: "#5f7b2d",
-                },
-              }}
+            <OCSButton
+              bgColor="#5f7b2d"
+              text="Sipariş Detay"
+              minWidth="8.75rem"
+              padding=".1rem"
               onClick={() => handleOrderDetailClick(data)}
-            >
-              Sipariş Detay
-            </Button>
+            />
           </StyledTableCell>
         </TableRow>
       </>
