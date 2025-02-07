@@ -14,6 +14,9 @@ import {
   updateOrdersTableFilterValues,
 } from "../../../store/ocs/orders/ordersSlice";
 import { isObjectValuesEmpty } from "../../../utils/commonHelper";
+import OCSTextField from "../../_shared/form-elements/text-field";
+import OCSDatePicker from "../../_shared/form-elements/date-picker";
+import OCSSelect from "../../_shared/form-elements/select";
 
 const OCSOrdersFilteringForm = ({}) => {
   const dispatch = useDispatch();
@@ -41,69 +44,51 @@ const OCSOrdersFilteringForm = ({}) => {
       className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"
     >
       {/* TODO: tüm form input'lar için component */}
-      <TextField
+      <OCSTextField
         label="Gönderi Takip No"
         name="shipmentTrackingNo"
         value={ordersTable.filterValues.shipmentTrackingNo}
         onChange={handleChange}
-        fullWidth
       />
 
-      <TextField
+      <OCSTextField
         label="Sipariş Takip No"
         name="orderTrackingNo"
         value={ordersTable.filterValues.orderTrackingNo}
         onChange={handleChange}
-        fullWidth
       />
 
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <DatePicker
-          label="Oluşturulma Tarihi (Başlangıç)"
-          value={ordersTable.filterValues.createdDate.min}
-          onChange={(value) => handleDateChange("createdDate.min", value)}
-          maxDate={ordersTable.filterValues.createdDate.max}
-          renderInput={(params) => <TextField {...params} fullWidth />}
-        />
-        <DatePicker
-          label="Oluşturulma Tarihi (Bitiş)"
-          value={ordersTable.filterValues.createdDate.max}
-          minDate={ordersTable.filterValues.createdDate.min}
-          onChange={(value) => handleDateChange("createdDate.max", value)}
-          renderInput={(params) => <TextField {...params} fullWidth />}
-        />
-      </LocalizationProvider>
+      <OCSDatePicker
+        label="Oluşturulma Tarihi (Başlangıç)"
+        value={ordersTable.filterValues.createdDate.min}
+        maxDate={ordersTable.filterValues.createdDate.max}
+        onChange={(value) => handleDateChange("createdDate.min", value)}
+      />
+      <OCSDatePicker
+        label="Oluşturulma Tarihi (Bitiş)"
+        value={ordersTable.filterValues.createdDate.max}
+        minDate={ordersTable.filterValues.createdDate.min}
+        onChange={(value) => handleDateChange("createdDate.max", value)}
+      />
 
-      <TextField
+      <OCSSelect
         select
         label="Durum"
         name="status"
         value={ordersTable.filterValues.status}
         onChange={handleChange}
-        fullWidth
-      >
-        {orderStatusOptions.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
-            {option.text}
-          </MenuItem>
-        ))}
-      </TextField>
+        options={orderStatusOptions}
+      />
 
       {/* select yerine switch box daha uygun olur */}
-      <TextField
+      <OCSSelect
         select
         label="Dağıtım Durumu"
         name="releasedForDistribution"
         value={ordersTable.filterValues.releasedForDistribution}
         onChange={handleChange}
-        fullWidth
-      >
-        {orderReleasedForDistributionOptions.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
-            {option.text}
-          </MenuItem>
-        ))}
-      </TextField>
+        options={orderReleasedForDistributionOptions}
+      />
 
       <div className="col-span-1 sm:col-span-2 md:col-span-4 flex justify-end gap-[1rem]">
         {/* TODO: button component */}
