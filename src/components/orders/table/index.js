@@ -62,7 +62,6 @@ const OCSOrderTable = ({}) => {
 
     dispatch(setOrdersTablePageNumber(value));
 
-    //TODO: build filter query
     dispatch(getOrdersTableDataThunkAsync({}));
   };
   const handleChangeRowsPerPage = (e) => {
@@ -100,11 +99,11 @@ const OCSOrderTable = ({}) => {
             34AA342
           </StyledTableCell>
           <StyledTableCell width="10%" align="center">
-            {/* TODO: badge oluştur */}
+            {/* badge oluşturulabilir */}
             {getReleaseForDistributionById(data.releasedForDistribution).text}
           </StyledTableCell>
           <StyledTableCell width="10%" align="center">
-            {/* TODO: badge ve status helper oluştur */}
+            {/* badge oluşturulabilir */}
             {getOrderStatusById(data.status).text}
           </StyledTableCell>
           <StyledTableCell width="10%" align="center">

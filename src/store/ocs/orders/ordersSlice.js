@@ -40,7 +40,7 @@ export const getOrdersTableDataThunkAsync = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      //TODO: handle api failure
+      // handle api failure...
 
       return rejectWithValue(err.response.data);
     } finally {
@@ -59,7 +59,7 @@ export const getOrderByIdThunkAsync = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      //TODO: handle api failure
+      // handle api failure...
 
       return rejectWithValue(err.response.data);
     } finally {
