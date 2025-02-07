@@ -113,6 +113,10 @@ const ordersSlice = createSlice({
     setOrdersTableTotalRecords: (state, action) => {
       state.ordersTable.totalRecords = action.payload;
     },
+    clearOrdersTableFilterValues: (state) => {
+      state.ordersTable.filterValues =
+        ordersReduxStateConstants.ordersTableFilterValues;
+    },
     updateOrdersTableFilterValues: (state, action) => {
       const { name, value } = action.payload;
 
@@ -158,6 +162,7 @@ export const {
   setOrdersTablePageSize,
   setOrdersTableTotalPages,
   setOrdersTableTotalRecords,
+  clearOrdersTableFilterValues,
   updateOrdersTableFilterValues,
   setOrdersTableSearchBarValue,
   setOrdersTableFilterQuery,

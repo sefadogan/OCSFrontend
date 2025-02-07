@@ -2,7 +2,7 @@ import OCSInfoCard from "./card";
 
 const OCSInfoCards = ({ data }) => {
   return (
-    <div className="flex flex-wrap gap-[1.5rem]">
+    <div className="flex flex-wrap gap-[2rem]">
       {data.map((item, idx) => (
         <OCSInfoCard
           key={idx}

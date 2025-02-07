@@ -22,13 +22,13 @@ const OCSOrdersPage = () => {
   }, []);
 
   return (
-    <div className="flex flex-col w-full p-[1.5rem] gap-[1.5rem]">
+    <div className="flex flex-col w-full p-[1.5rem] gap-[2rem]">
       <OCSInfoCards data={infoCardsData} />
 
       <OCSDeliveryProgressBar total={400} completed={300} />
 
       <OCSTitleSeperator
-        titleClassName="text-2xl font-bold"
+        titleClassName="text-2xl font-bold mt-[1rem]"
         title="SİPARİŞ KONTROL EKRANI"
       />
 

@@ -1,7 +1,3 @@
-import { Button, MenuItem, TextField } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -9,15 +5,16 @@ import {
   orderStatusOptions,
 } from "../../../constants/orderConstants";
 import {
+  clearOrdersTableFilterValues,
   getOrdersTableDataThunkAsync,
   selectOrders,
   updateOrdersTableFilterValues,
 } from "../../../store/ocs/orders/ordersSlice";
 import { isObjectValuesEmpty } from "../../../utils/commonHelper";
-import OCSTextField from "../../_shared/form-elements/text-field";
+import OCSButton from "../../_shared/button";
 import OCSDatePicker from "../../_shared/form-elements/date-picker";
 import OCSSelect from "../../_shared/form-elements/select";
-import OCSButton from "../../_shared/button";
+import OCSTextField from "../../_shared/form-elements/text-field";
 
 const OCSOrdersFilteringForm = ({}) => {
   const dispatch = useDispatch();
@@ -32,6 +29,11 @@ const OCSOrdersFilteringForm = ({}) => {
     dispatch(updateOrdersTableFilterValues({ name, value }));
   };
 
+  const handleClearFilteringForm = async () => {
+    await dispatch(clearOrdersTableFilterValues());
+    dispatch(getOrdersTableDataThunkAsync({}));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (ordersTable.loadOptions.isLoading) return;
@@ -44,7 +46,6 @@ const OCSOrdersFilteringForm = ({}) => {
       onSubmit={handleSubmit}
       className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"
     >
-      {/* TODO: tüm form input'lar için component */}
       <OCSTextField
         label="Gönderi Takip No"
         name="shipmentTrackingNo"
@@ -92,6 +93,17 @@ const OCSOrdersFilteringForm = ({}) => {
       />
 
       <div className="col-span-1 sm:col-span-2 md:col-span-4 flex justify-end gap-[1rem]">
+        <OCSButton
+          bgColor="#e3e3e3"
+          textColor="#444444"
+          text="Temizle"
+          minWidth="8.75rem"
+          onClick={handleClearFilteringForm}
+          disabled={
+            ordersTable.loadOptions.isLoading ||
+            isObjectValuesEmpty(ordersTable.filterValues)
+          }
+        />
         <OCSButton
           type="submit"
           bgColor="#444444"

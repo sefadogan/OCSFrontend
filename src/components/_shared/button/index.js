@@ -9,6 +9,7 @@ const OCSButton = ({
   hoverBgColor,
   padding,
   onClick,
+  textColor,
 }) => {
   return (
     <Button
@@ -23,6 +24,7 @@ const OCSButton = ({
         minWidth: minWidth,
         fontWeight: 500,
         borderRadius: ".5rem",
+        color: textColor,
         padding: padding,
         ":hover": {
           backgroundColor: hoverBgColor || bgColor,
