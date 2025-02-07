@@ -1,15 +1,11 @@
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
 import OCSInfoCards from "../../components/_shared/cards-info";
 import OCSDeliveryProgressBar from "../../components/_shared/progress-bars/delivery";
-import OrderTable from "../../components/_shared/table";
-import { selectOrders } from "../../store/ocs/orders/ordersSlice";
 import OCSTitleSeperator from "../../components/_shared/seperators/title";
 import OCSOrdersFilteringForm from "../../components/orders/filtering-form";
-import { useEffect } from "react";
+import OCSOrderTable from "../../components/orders/table";
 
 const OCSOrdersPage = () => {
-  const { orders } = useSelector(selectOrders);
-
   const infoCardsData = [
     { title: "Rotadaki Paket", value: 721 },
     { title: "DM Paket Sayısı", value: 367 },
@@ -38,7 +34,7 @@ const OCSOrdersPage = () => {
 
       <OCSOrdersFilteringForm />
 
-      <OrderTable />
+      <OCSOrderTable />
     </div>
   );
 };

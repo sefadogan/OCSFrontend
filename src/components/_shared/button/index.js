@@ -8,13 +8,14 @@ const OCSButton = ({
   minWidth,
   hoverBgColor,
   padding,
+  onClick,
 }) => {
   return (
     <Button
       type={type}
       variant="contained"
       disabled={disabled}
-      padding
+      onClick={onClick}
       sx={{
         backgroundColor: bgColor,
         textTransform: "none",

@@ -17,7 +17,7 @@ const OCSTableHeader = ({ headers }) => {
           },
         }}
       >
-        {headers.map((header, idx) => (
+        {headers?.map((header, idx) => (
           <TableCell key={idx} width={header.width}>
             {header.name}
           </TableCell>
